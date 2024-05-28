@@ -117,16 +117,22 @@ body {
 
     redslider.oninput = function() {
         redout.innerHTML = this.value;
+    }
+    redslider.onchange = function() {
         sendColour();
     }
 
     greenslider.oninput = function() {
         greenout.innerHTML = this.value;
+    }
+    greenslider.onchange = function() {
         sendColour();
     }
 
     blueslider.oninput = function() {
         blueout.innerHTML = this.value;
+    }
+    blueslider.onchange = function() {
         sendColour();
     }
 
