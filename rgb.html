@@ -86,12 +86,26 @@ body {
     var blueslider = document.getElementById("blue");
     var blueout = document.getElementById("blue_val");
 
-    redout.innerHTML = redslider.value;
-    greenout.innerHTML = greenslider.value;
-    blueout.innerHTML = blueslider.value;
-
     var host = location.hostname;
-    var canSend = true;
+    var canSend = false;
+
+    // Get existing values
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+            var rgb = req.responseText.split("\n");
+            redslider.value = 1023 - rgb[0];
+            greenslider.value = 1023 - rgb[1];
+            blueslider.value = 1023 - rgb[2];
+            redout.innerHTML = redslider.value;
+            greenout.innerHTML = greenslider.value;
+            blueout.innerHTML = blueslider.value;
+            canSend = true;
+        }
+    }
+    req.open("GET", 'http://'+host+'/rgb', true);
+    req.send();
+
     function sendColour() {
       if (!canSend) {
         return;
@@ -102,17 +116,14 @@ body {
         'b=' + (1023-blueslider.value)
       ].join('&');
       canSend = false;
-      var hosts = host.split(' ');
-      for (var i=0; i<hosts.length; ++i) {
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function() {
-          if (req.readyState == 4) {
-            setTimeout(function() { canSend = true; }, 100);
-          }
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+          setTimeout(function() { canSend = true; }, 100);
         }
-        req.open("POST", 'http://'+hosts[i]+'/rgb.lua?' + params, true);
-        req.send();
       }
+      req.open("POST", 'http://'+host+'/rgb.lua?' + params, true);
+      req.send();
     }
 
     redslider.oninput = function() {
