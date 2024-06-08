@@ -63,7 +63,7 @@ if (wifiConfig.mode == wifi.SOFTAP) or (wifiConfig.mode == wifi.STATIONAP) then
 end
 if (wifiConfig.mode == wifi.STATION) or (wifiConfig.mode == wifi.STATIONAP) then
     print('Client MAC: ',wifi.sta.getmac())
-    wifi.sta.config(wifiConfig.stationPointConfig.ssid, wifiConfig.stationPointConfig.pwd, 1)
+    wifi.sta.config(wifiConfig.stationPointConfig)
 end
 
 print('chip: ',node.chipid())
@@ -100,7 +100,8 @@ collectgarbage()
 if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
   local joinCounter = 0
   local joinMaxAttempts = 5
-  tmr.alarm(0, 3000, 1, function()
+  local t = tmr.create()
+  t:alarm(3000, tmr.ALARM_AUTO, function()
     local ip = wifi.sta.getip()
     if ip == nil and joinCounter < joinMaxAttempts then
       print('Connecting to WiFi Access Point ...')
@@ -112,12 +113,12 @@ if (wifi.getmode() == wifi.STATION) or (wifi.getmode() == wifi.STATIONAP) then
         print('IP: ',ip)
         dofile("httpserver.lc")(80)
       end
-      tmr.stop(0)
+      t:unregister()
       joinCounter = nil
       joinMaxAttempts = nil
       collectgarbage()
 
-      tmr.alarm(0, 5000, 1, saveColor)
+      t:alarm(5000, tmr.ALARM_AUTO, saveColor)
     end
   end
   )
