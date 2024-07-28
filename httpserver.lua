@@ -16,6 +16,12 @@ local function onConnect(connection)
     connection:close()
   end
 
+  local function close_restart()
+    connection:close()
+    local t = tmr.create()
+    t:alarm(100, tmr.ALARM_SINGLE, node.restart)
+  end
+
   local function onReceive(connection, request)
     collectgarbage()
     local method, uri = request:match("^([A-Z]+) /([^?]*).- HTTP/[1-9]+.[0-9]+\r\n")
@@ -72,7 +78,7 @@ local function onConnect(connection)
     elseif method == "POST" then
       if uri == "" then
         -- Reboot the device
-        connection:send("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\nRebooting\n", node.restart)
+        connection:send("HTTP/1.1 200 OK\r\nConnection: close\r\n\r\nRebooting\n", close_restart)
       else
         -- Poor man's CGI
         local func = dofile(uri)
