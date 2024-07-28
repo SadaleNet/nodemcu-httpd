@@ -17,6 +17,9 @@ return function (connection, req)
   end
 
   -- Send back JSON response.
+  connection:on("sent", function(c)
+      c:close()
+  end
+  )
   connection:send("HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nCache-Control: private, no-store\r\nConnection: close\r\n\r\n{'error':0, 'message':'OK'}")
-  connection:close()
 end

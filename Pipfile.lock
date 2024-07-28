@@ -1,0 +1,38 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "020386049ec6467158f9c5664f0dc2113d0b46384ef245575b5c97908f266ae3"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.12"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "nodemcu-uploader": {
+            "hashes": [
+                "sha256:1d94e396632615d09f5f27ffaf9ed0f313ff695c36b7a69426072487dd7894b1",
+                "sha256:477eda1f2b280f9145a3e6c721982be7722dbb940a8fe12c9b5260bcf08dbbec"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.5'",
+            "version": "==1.0.0"
+        },
+        "pyserial": {
+            "hashes": [
+                "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb",
+                "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0"
+            ],
+            "index": "pypi",
+            "version": "==3.5"
+        }
+    },
+    "develop": {}
+}

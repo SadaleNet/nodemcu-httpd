@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DSL lights RGB</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" sizes="82x99" href="http://www.dimsumlabs.com/wp-content/uploads/2014/08/logo_dsl_text_82x99.png"/>
+<style>
+body {
+    background: #FFFFFF;
+}
+.slidercontainer {
+    margin:20px;
+    margin-top:50px;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#red::-webkit-slider-thumb {
+  background: #FF0000;
+}
+#red::-moz-range-thumb {
+  background: #FF0000;
+}
+#green::-webkit-slider-thumb {
+  background: #008800;
+}
+#green::-moz-range-thumb {
+  background: #008800;
+}
+#blue::-webkit-slider-thumb {
+  background: #0000FF;
+}
+#blue::-moz-range-thumb {
+  background: #0000FF;
+}
+.colorvalue {
+  text-align: center;
+}
+</style>
+  </head>
+  <body style="margin:5">
+      <p class="slidercontainer">
+          <input type="range" min="0" max="1023" value="199" class="slider" id="red"/>
+      </p>
+      <div class="colorvalue">R: <span id="red_val">X</span></div>
+      <p class="slidercontainer">
+          <input type="range" min="0" max="1023" value="199" class="slider" id="green"/>
+      </p>
+      <div class="colorvalue">G: <span id="green_val">X</span></div>
+      <p class="slidercontainer">
+           <input type="range" min="0" max="1023" value="199" class="slider" id="blue"/>
+      </p>
+      <div class="colorvalue">B: <span id="blue_val">X</span></div>
+  </body>
+  <script type="text/javascript">
+  (function (){
+    var redslider = document.getElementById("red");
+    var redout = document.getElementById("red_val");
+    var greenslider = document.getElementById("green");
+    var greenout = document.getElementById("green_val");
+    var blueslider = document.getElementById("blue");
+    var blueout = document.getElementById("blue_val");
+
+    var host = location.hostname;
+    var canSend = false;
+
+    // Get existing values
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+            var rgb = req.responseText.split("\n");
+            redslider.value = 1023 - rgb[0];
+            greenslider.value = 1023 - rgb[1];
+            blueslider.value = 1023 - rgb[2];
+            redout.innerHTML = redslider.value;
+            greenout.innerHTML = greenslider.value;
+            blueout.innerHTML = blueslider.value;
+            canSend = true;
+        }
+    }
+    req.open("GET", 'http://'+host+'/rgb', true);
+    req.send();
+
+    function sendColour() {
+      if (!canSend) {
+        return;
+      }
+      var params = [
+        'r=' + (1023-redslider.value),
+        'g=' + (1023-greenslider.value),
+        'b=' + (1023-blueslider.value)
+      ].join('&');
+      canSend = false;
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+          setTimeout(function() { canSend = true; }, 100);
+        }
+      }
+      req.open("POST", 'http://'+host+'/rgb.lua?' + params, true);
+      req.send();
+    }
+
+    redslider.oninput = function() {
+        redout.innerHTML = this.value;
+    }
+    redslider.onchange = function() {
+        sendColour();
+    }
+
+    greenslider.oninput = function() {
+        greenout.innerHTML = this.value;
+    }
+    greenslider.onchange = function() {
+        sendColour();
+    }
+
+    blueslider.oninput = function() {
+        blueout.innerHTML = this.value;
+    }
+    blueslider.onchange = function() {
+        sendColour();
+    }
+
+  })();
+  </script>
+</html>
